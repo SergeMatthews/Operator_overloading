@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 using std::cout;
 using std::cin;
 using std::endl;
@@ -20,6 +20,7 @@ public:
     {
         if (!denominator)
             throw std::invalid_argument("Division by 0! Fraction cannot be created.");
+        ReduceFraction(this->numerator, this->denominator);
     }
     void PrintFraction()
     {
@@ -27,30 +28,7 @@ public:
     }
     bool operator== (const Fraction& other)
     {
-        if ((other.numerator == numerator) && (other.denominator == denominator))
-            return true;
-        else if ((numerator) && (other.numerator))
-        {
-            if (!(other.numerator % numerator) && !(other.denominator % denominator))
-            {
-                int ratio = other.denominator / denominator;
-                int numerator_temp = other.numerator / ratio;
-                int denominator_temp = other.denominator / ratio;
-                if ((numerator_temp == numerator) && (denominator_temp == denominator))
-                    return true;
-            }
-            else if (!(numerator % other.numerator) && !(denominator % other.denominator))
-            {
-                int ratio = denominator / other.denominator;
-                int numerator_temp = numerator / ratio;
-                int denominator_temp = denominator / ratio;
-                if ((numerator_temp == other.numerator) && (denominator_temp == other.denominator))
-                    return true;
-            }
-        }
-        else if (numerator == other.numerator)
-            return true;
-        return false;
+        return ((numerator * other.denominator) == (other.numerator * denominator));
     }
     bool operator!= (const Fraction& other)
     {
@@ -58,10 +36,7 @@ public:
     }
     bool operator> (const Fraction& other)
     {
-        double fraction_own = static_cast<double>(numerator) / static_cast<double>(denominator);
-        double fraction_other = static_cast<double>(other.numerator) / static_cast<double>(other.denominator);
-
-        return (fraction_own > fraction_other);
+        return ((numerator * other.denominator) > (other.numerator * denominator));
     }
     bool operator>= (const Fraction& other)
     {
@@ -80,7 +55,7 @@ public:
         Fraction temp;
         if (denominator == other.denominator)
         {
-            temp.numerator = numerator + other.denominator;
+            temp.numerator = numerator + other.numerator;
             temp.denominator = denominator;
         }
         else
@@ -96,7 +71,7 @@ public:
         Fraction temp;
         if (denominator == other.denominator)
         {
-            temp.numerator = numerator - other.denominator;
+            temp.numerator = numerator - other.numerator;
             temp.denominator = denominator;
         }
         else
@@ -130,8 +105,7 @@ public:
             Fraction temp;
             temp.numerator = temp.denominator = 0;
             return temp;
-        }
-            
+        } 
     }
     Fraction& operator-()
     {
@@ -147,7 +121,7 @@ public:
     }
     Fraction operator++(int)
     {
-        Fraction temp = *this;
+        Fraction temp(*this);
         numerator += denominator;
         ReduceFraction(numerator, denominator);
         return temp;
@@ -160,15 +134,14 @@ public:
     }
     Fraction operator--(int)
     {
-        Fraction temp = *this;
+        Fraction temp(*this);
         numerator -= denominator;
+        ReduceFraction(numerator, denominator);
         return temp;
     }
 
     friend std::ostream& operator<< (std::ostream& os, const Fraction& frac);
 };
-
-
 
 int main()
 {
@@ -201,7 +174,6 @@ int main()
     cout << f1 << "--" << " * " << f2 << " = ";
     cout << (f1-- * f2) << endl;
     cout << "Значение дроби 1 = " << f1 << endl;
-    
 
     return EXIT_SUCCESS;
 }
